@@ -5,14 +5,21 @@ import { RolesGuard } from '../guard/role.guard';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { AuthRoles } from './auth.decorator';
 
-export function Auths(role?: UserRolePublic | UserRolePublic[]) {
+export function Auths(role?: UserRolePublic | UserRolePublic[], token_types?: string[]) {
     let roles = [];
     if (typeof role === 'string') roles = [role];
     else roles = role;
-    return applyDecorators(
+    let decarators = [
         AuthRoles(...roles),
         UseGuards(JwtAuthGuard, RolesGuard),
-        // ApiBearerAuth('accessToken'),
-        // ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+    ];
+    token_types.forEach(token_type => {
+        decarators.push(
+            ApiBearerAuth(token_type),
+            ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+        );
+    });
+    return applyDecorators(
+        ...decarators,
     );
 }

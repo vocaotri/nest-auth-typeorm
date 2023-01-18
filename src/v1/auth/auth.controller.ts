@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, HttpStatus, NotFoundException, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ADMINACCESSTOKEN, USERACCESSTOKEN } from 'src/contants/token-name';
 import { ApiBadrequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custome.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
+import { UserRolePublic } from '../user/enums/UserRole';
 import { User } from '../user/user.entity';
+import { Auths } from './decorator/auths.decorator';
 import { LoginDto } from './dto/login.dto';
 
 @Controller()
@@ -80,8 +83,7 @@ export class AuthController {
             }
         }
     })
-    @ApiBearerAuth('user_access_token')
-    @ApiBearerAuth('admin_access_token')
+    @Auths([UserRolePublic.USER, UserRolePublic.ADMIN], [USERACCESSTOKEN, ADMINACCESSTOKEN])
     async logout() {
         return 'logout';
     }
