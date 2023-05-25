@@ -29,8 +29,6 @@ services:
             dockerfile: Dockerfile
         volumes:
             - .:/usr/src/app
-        command: >
-            sh -c "npm i && npm run start:dev"
         ports:
             - '${M_PORT}:${PORT}'
 networks:
