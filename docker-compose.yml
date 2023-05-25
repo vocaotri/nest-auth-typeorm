@@ -27,6 +27,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+        env_file:
+            - .env
         # mount only src folder
         volumes:
             - ./src:/usr/src/app/src
