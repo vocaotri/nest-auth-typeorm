@@ -27,8 +27,9 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+        # mount only src folder
         volumes:
-            - .:/usr/src/app
+            - ./src:/usr/src/app/src
         ports:
             - '${M_PORT}:${PORT}'
 networks:
