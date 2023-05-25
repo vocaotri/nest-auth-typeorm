@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, HttpStatus, NotFoundException, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
+import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ADMINACCESSTOKEN, USERACCESSTOKEN } from 'src/contants/token-name';
 import { ApiBadrequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custome.respone';
@@ -88,5 +88,3 @@ export class AuthController {
         return 'logout';
     }
 }
-
-

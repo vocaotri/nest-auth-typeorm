@@ -1,5 +1,5 @@
 import { Controller, Get, HttpStatus, Param, Patch } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ADMINACCESSTOKEN, USERACCESSTOKEN } from 'src/contants/token-name';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { ApiPaginatedResponse } from 'src/utils/decorator/api-pagination.response';
@@ -10,6 +10,7 @@ import { User } from './user.entity';
 @Controller()
 @ApiTags('user')
 export class UserController {
+    /* Creating a route that returns the current user. */
     @ApiModelResponse({
         model: User,
         description: 'Success. Returns user',
@@ -22,6 +23,9 @@ export class UserController {
         return 'me';
     }
 
+    
+    /* The above code is using the `@ApiModelResponse` decorator to add a response model to the
+    `update` method. */
     @ApiModelResponse({
         model: User,
         description: 'Success. Returns user',
@@ -30,10 +34,17 @@ export class UserController {
     @Patch('user/:id')
     @ApiOperation({ summary: 'Update user (Admin)' })
     @Auths([UserRolePublic.ADMIN], [ADMINACCESSTOKEN])
+    /**
+     * The `@Param('id')` decorator is used to get the value of the `id` parameter from the URL
+     * @param {number} id - The id of the user to update.
+     * @returns The string 'update'
+     */
     async update(@Param('id') id: number) {
         return 'update';
     }
 
+    
+    /* Creating a route that will return all users. */
     @ApiPaginatedResponse({
         model: User,
         description: 'Success. Returns users',
@@ -42,6 +53,10 @@ export class UserController {
     @Get('users')
     @ApiOperation({ summary: 'Get all users (Admin)' })
     @Auths([UserRolePublic.ADMIN], [ADMINACCESSTOKEN])
+    /**
+     * The function returns a promise that resolves to a string
+     * @returns 'getAll'
+     */
     async getAll() {
         return 'getAll';
     }
