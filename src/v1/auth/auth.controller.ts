@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custom.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
@@ -7,10 +7,16 @@ import { UserRole } from '../user/enums/UserRole';
 import { User } from '../user/user.entity';
 import { Auth } from './decorator/auths.decorator';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { UserService } from '../user/user.service';
 
 @Controller()
 @ApiTags('Auth')
 export class AuthController {
+    constructor(
+        private readonly userService: UserService
+    ) { }
+
     @Post('login')
     @ApiOperation({ summary: 'Login' })
     @ApiCustomResponse({
@@ -20,9 +26,9 @@ export class AuthController {
             key: 'tokens',
             value: {
                 access_token: { type: 'string', example: "jwt_token" },
-                expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
-                refresh_token: { type: 'string', example: "refresh_token", },
-                refresh_expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
+                expirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
+                refreshToken: { type: 'string', example: "refreshToken", },
+                refreshExpirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
             }
         },
         model: User
@@ -46,8 +52,8 @@ export class AuthController {
     })
     @Post('register')
     @ApiOperation({ summary: 'Register' })
-    async register() {
-        return 'register';
+    async register(@Body() registerDto: RegisterDto) {
+        return this.userService.createUser(registerDto);
     }
 
     @ApiModelResponse({

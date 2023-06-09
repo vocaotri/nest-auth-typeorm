@@ -14,9 +14,9 @@ import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
     name: 'users',
 })
 // Create pair of unique columns for soft delete
-@Unique(['user_name', 'not_delete'])
-@Unique(['email', 'not_delete'])
-@Unique(['phone', 'not_delete'])
+@Unique(['username', 'notDelete'])
+@Unique(['email', 'notDelete'])
+@Unique(['phone', 'notDelete'])
 export class User extends AppBaseEntity {
     @ApiProperty({
         example: 1,
@@ -30,7 +30,7 @@ export class User extends AppBaseEntity {
         description: 'username',
     })
     @Column()
-    user_name: string;
+    username: string;
 
     @ApiProperty({
         example: 'example@example.com',
@@ -58,17 +58,18 @@ export class User extends AppBaseEntity {
     role: UserRole;
 
     @OneToMany(() => AccessToken, (_) => _.user)
-    access_tokens: AccessToken[];
+    accessTokens: AccessToken[];
 
     // @OneToMany(() => UserVerify, (_) => _.user_verify)
     // user_verifies: UserVerify[];
 
     @Column({ select: false, default: 1, nullable: true })
-    not_delete: boolean;
+    @Exclude()
+    notDelete: boolean;
 
     @BeforeSoftRemove()
     async setNotDeleted() {
-        this.not_delete = null;
+        this.notDelete = null;
         await this.save();
     }
 
@@ -81,14 +82,15 @@ export class User extends AppBaseEntity {
 
     @BeforeInsert()
     @BeforeUpdate()
-    async setHashPassword() {
+    async updateHashPassword() {
+        console.log(this.password, this.tempPassword);
         if (this.password && this.password !== this.tempPassword) {
             this.password = await hashPassword(this.password);
         }
     }
 
     // @ManyToMany(() => Pet, (_) => _.users)
-    // @JoinTable({ name: 'user_pets' , joinColumn: { name: 'user_id' }, inverseJoinColumn: { name: 'pet_id' }})
+    // @JoinTable({ name: 'user_pets' , joinColumn: { name: 'userId' }, inverseJoinColumn: { name: 'pet_id' }})
     // pets: Pet[]
 
     // @PolymorphicChildren(() => Follow, {

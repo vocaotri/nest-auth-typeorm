@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { User } from "../user/user.entity";
 
 @Entity({
-    name: 'access_tokens',
+    name: 'accessTokens',
 })
 export class AccessToken extends AppBaseEntity {
     @ApiProperty({
@@ -23,44 +23,43 @@ export class AccessToken extends AppBaseEntity {
 
     @ApiProperty({
         example: 1,
-        description: 'expiration_date',
+        description: 'expirationDate',
     })
     @Column()
-    expiration_date: Date;
+    expirationDate: Date;
 
     @ApiProperty({
         example: 1,
-        description: 'refresh_token',
+        description: 'refreshToken',
     })
     @Column()
-    refresh_token: string;
+    refreshToken: string;
 
     @ApiProperty({
         example: 1,
-        description: 'refresh_expiration_date',
+        description: 'refreshExpirationDate',
     })
     @Column()
-    refresh_expiration_date: Date;
+    refreshExpirationDate: Date;
 
     @ApiProperty({
         example: 1,
-        description: 'revoked_at',
+        description: 'revokedAt',
     })
     @Column()
-    revoked_at: Date;
+    revokedAt: Date;
 
     @ApiProperty({
         example: 1,
-        description: 'last_used_at',
+        description: 'lastUsedAt',
     })
     @Column()
-    last_used_at: Date;
+    lastUsedAt: Date;
 
     @ApiProperty({
         example: 1,
-        description: 'user_id',
+        description: 'userId',
     })
-    @ManyToOne(() => User, (user) => user.access_tokens)
-    @JoinColumn({ name: 'user_id' })
+    @ManyToOne(() => User, (user) => user.accessTokens)
     user: User;
 }

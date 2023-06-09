@@ -20,9 +20,9 @@ export class AuthController {
             key: 'tokens',
             value: {
                 access_token: { type: 'string', example: "jwt_token" },
-                expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
-                refresh_token: { type: 'string', example: "refresh_token", },
-                refresh_expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
+                expirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
+                refreshToken: { type: 'string', example: "refreshToken", },
+                refreshExpirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
             }
         },
         model: User

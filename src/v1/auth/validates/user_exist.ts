@@ -10,10 +10,10 @@ export class ExistValidator implements ValidatorConstraintInterface {
     async validate(value: any, args: ValidationArguments): Promise<boolean> {
         const filter = {};
         filter[args.property] = value;
-        const countUser = this.userService.countUser(filter);
-        return countUser > 0;
+        const countUser = await this.userService.countUser(filter);
+        return countUser == 0;
     }
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} is not exist`;
+        return `${args.property} is exist`;
     }
 }

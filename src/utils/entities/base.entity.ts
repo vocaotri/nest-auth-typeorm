@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
     BaseEntity, CreateDateColumn, UpdateDateColumn, DeleteDateColumn
   } from 'typeorm';
@@ -10,5 +11,6 @@ import {
     public updated_at: Date;
   
     @DeleteDateColumn()
-    public deleted_at: Date;
+    @Exclude()
+    public deletedAt: Date;
   }
