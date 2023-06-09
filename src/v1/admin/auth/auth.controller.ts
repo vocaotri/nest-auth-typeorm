@@ -1,8 +1,12 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiBadrequestResponse } from 'src/utils/decorator/api-badrequest.respone';
-import { ApiCustomResponse } from 'src/utils/decorator/api-custome.respone';
+import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
+import { ApiCustomResponse } from 'src/utils/decorator/api-custom.respone';
+import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
+import { Auth } from 'src/v1/auth/decorator/auths.decorator';
 import { LoginDto } from 'src/v1/auth/dto/login.dto';
+import { UserRole } from 'src/v1/user/enums/UserRole';
+import { User } from 'src/v1/user/user.entity';
 
 @Controller()
 @ApiTags('AAuth')
@@ -11,19 +15,35 @@ export class AuthController {
     @ApiOperation({ summary: 'Login' })
     @ApiCustomResponse({
         status: HttpStatus.OK,
-        description: 'Success. Returns access token',
-        data_custom: {
-            access_token: { type: 'string', example: "jwt_token" },
-            expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
-            refresh_token: { type: 'string', example: "refresh_token", },
-            refresh_expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
-        }
+        message: 'Success. Returns access token',
+        dataCustom: {
+            key: 'tokens',
+            value: {
+                access_token: { type: 'string', example: "jwt_token" },
+                expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
+                refresh_token: { type: 'string', example: "refresh_token", },
+                refresh_expiration_date: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
+            }
+        },
+        model: User
     })
-    @ApiBadrequestResponse({
+    @ApiBadRequestResponse({
         error: 'Bad Request',
         message: ['Username or password is incorrect']
     })
     async login(@Body() loginDto: LoginDto) {
         return 'login';
+    }
+
+    @ApiModelResponse({
+        model: null,
+        message: 'Success. Returns user',
+        status: HttpStatus.ACCEPTED
+    })
+    @Delete('logout')
+    @ApiOperation({ summary: 'Logout' })
+    @Auth(UserRole.ADMIN)
+    async logout() {
+        return 'logout';
     }
 }

@@ -1,4 +1,4 @@
-interface PaginationMeta {
+interface IPaginationMeta {
   totalItems: number;
   itemCount: number;
   itemsPerPage: number;
@@ -8,7 +8,7 @@ interface PaginationMeta {
 
 class PaginatedDto<TData> {
   items: TData[];
-  meta: PaginationMeta;
+  meta: IPaginationMeta;
 }
 
-export { PaginationMeta, PaginatedDto };
+export { IPaginationMeta, PaginatedDto };

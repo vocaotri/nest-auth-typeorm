@@ -1,6 +1,8 @@
-import { Controller, Delete, Get, HttpStatus, Patch } from '@nestjs/common';
+import { Controller, Delete, Get, HttpStatus, Param, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
+import { ApiPaginatedResponse } from 'src/utils/decorator/api-pagination.response';
 import { Auth } from 'src/v1/auth/decorator/auths.decorator';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { User } from 'src/v1/user/user.entity';
@@ -10,7 +12,7 @@ import { User } from 'src/v1/user/user.entity';
 export class UserController {
     @ApiModelResponse({
         model: User,
-        description: 'Success. Returns user',
+        message: 'Success. Returns user',
         status: HttpStatus.OK
     })
     @Get('me')
@@ -20,6 +22,11 @@ export class UserController {
         return 'me';
     }
 
+    @ApiPaginatedResponse({
+        model: User,
+        message: 'Success. Returns users',
+        status: 200
+    })
     @Get()
     @ApiOperation({ summary: 'Get all users' })
     @Auth(UserRole.ADMIN)
@@ -27,24 +34,57 @@ export class UserController {
         return 'getAll';
     }
 
+    @ApiModelResponse({
+        model: User,
+        message: 'Success. Returns user',
+        status: HttpStatus.OK
+    })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: [
+            'User not found'
+        ]
+    })
     @Get(':id')
     @ApiOperation({ summary: 'Get user by id' })
     @Auth(UserRole.ADMIN)
-    async getById() {
+    async getById(@Param('id') id: number) {
         return 'getById';
     }
 
+    @ApiModelResponse({
+        model: User,
+        message: 'Success. Returns user',
+        status: HttpStatus.ACCEPTED
+    })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: [
+            'User not found'
+        ]
+    })
     @Patch(':id')
     @ApiOperation({ summary: 'Update user by id' })
     @Auth(UserRole.ADMIN)
-    async update() {
+    async update(@Param('id') id: number) {
         return 'update';
     }
 
+    @ApiModelResponse({
+        model: null,
+        message: 'Success. Returns user',
+        status: HttpStatus.OK
+    })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: [
+            'User not found'
+        ]
+    })
     @Delete(':id')
     @ApiOperation({ summary: 'Remove user by id' })
     @Auth(UserRole.ADMIN)
-    async RemoveUserById() {
+    async RemoveUserById(@Param('id') id: number) {
         return 'RemoveUserById';
     }
 }

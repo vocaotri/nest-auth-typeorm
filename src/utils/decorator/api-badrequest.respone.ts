@@ -1,5 +1,5 @@
-import { applyDecorators, Type } from '@nestjs/common';
-import { ApiBadRequestResponse } from '@nestjs/swagger';
+import { applyDecorators } from '@nestjs/common';
+import { ApiBadRequestResponse as  ApiBadRequestRes} from '@nestjs/swagger';
 
 interface IBADREQUESTDecoratorApiResponse {
     message: string[];
@@ -7,13 +7,13 @@ interface IBADREQUESTDecoratorApiResponse {
     error: string;
 }
 
-export const ApiBadrequestResponse = <TModel extends Type<any>>(
+export const ApiBadRequestResponse =(
     options: IBADREQUESTDecoratorApiResponse,
 ) => {
     return applyDecorators(
-        ApiBadRequestResponse({
+        ApiBadRequestRes({
             status: options.status || 400,
-            description: options.message[0] || 'Successfully received model item',
+            description: options.message[0] || 'Bad Request',
             schema: {
                 properties: {
                     status: {

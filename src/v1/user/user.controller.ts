@@ -4,13 +4,14 @@ import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { Auth } from '../auth/decorator/auths.decorator';
 import { UserRole } from './enums/UserRole';
 import { User } from './user.entity';
+import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 
 @Controller()
 @ApiTags('User')
 export class UserController {
     @ApiModelResponse({
         model: User,
-        description: 'Success. Returns user',
+        message: 'Success. Returns user',
         status: HttpStatus.OK
     })
     @ApiOperation({ summary: 'Get current user' })
@@ -22,8 +23,15 @@ export class UserController {
 
     @ApiModelResponse({
         model: User,
-        description: 'Success. Returns user',
+        message: 'Success. Returns user',
         status: HttpStatus.CREATED
+    })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: [
+            'Phone number is already in use',
+            'User not found'
+        ]
     })
     @ApiOperation({ summary: 'Update user' })
     @Patch('user')
