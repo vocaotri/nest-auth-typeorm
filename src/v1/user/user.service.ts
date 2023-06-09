@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { Response } from 'src/utils/interceptors/transform.interceptor';
 
@@ -21,8 +21,17 @@ export class UserService {
             message: 'Success. Returns user',
         };
     }
+    // share service
+    async getUser(filter: FindOptionsWhere<User> | FindOptionsWhere<User>[]): Promise<User> {
+        const user = await this.userRepository.findOneOrFail({
+            where: filter
+        });
+        return user;
+    }
 
-    countUser(filter: {}) {
-        return this.userRepository.count(filter);
+    async countUser(filter: {}) {
+        return this.userRepository.count({
+            where: filter
+        });
     }
 }

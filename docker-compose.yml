@@ -32,6 +32,7 @@ services:
         # mount only src folder
         volumes:
             - ./src:/usr/src/app/src
+            - package.json:/usr/src/app/package.json
         ports:
             - '${M_PORT}:${PORT}'
 networks:

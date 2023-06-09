@@ -9,12 +9,14 @@ import { Auth } from './decorator/auths.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from '../user/user.service';
+import { AuthService } from './auth.service';
 
 @Controller()
 @ApiTags('Auth')
 export class AuthController {
     constructor(
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly authService: AuthService
     ) { }
 
     @Post('login')
@@ -38,7 +40,7 @@ export class AuthController {
         message: ['Username or password is incorrect']
     })
     async login(@Body() loginDto: LoginDto) {
-        return 'login';
+        return this.authService.login(loginDto);
     }
 
     @ApiModelResponse({

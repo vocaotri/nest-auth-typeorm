@@ -72,7 +72,8 @@ export class User extends AppBaseEntity {
         this.notDelete = null;
         await this.save();
     }
-
+    
+    @Exclude()
     private tempPassword: string;
 
     @AfterLoad()

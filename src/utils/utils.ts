@@ -1,37 +1,84 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { SALTORROUNDS } from 'src/contants/crypto';
-import { ResponseDetailInterface, ResponseFailedInterface } from './interface/response.interface';
+import {
+    createCipheriv,
+    createDecipheriv,
+    randomBytes,
+    webcrypto,
+} from 'crypto';
 
 export const hashPassword = async (password: string): Promise<string> => {
-    return await bcrypt.hash(password, SALTORROUNDS);
-}
-
-export const comparePassword = async (password: string, hash: string): Promise<boolean> => {
-    return await bcrypt.compare(password, hash);
-}
+    return await bcrypt.hash(password, 11);
+};
 
 export const addMinutes = (minutes, date = new Date()) => {
-    date.setMinutes(date.getMinutes() + minutes);
+    let newDate = new Date();
+    if (date) {
+        newDate = new Date(date.getTime());
+    }
+    newDate.setMinutes(date.getMinutes() + minutes);
     return date;
-}
+};
 
-export function ResponseSuccess(data: Object, message = "success"): ResponseDetailInterface {
-    return {
-        status: true,
-        message: message,
-        data: data
-    };
-}
+export const addDays = (days, date = null) => {
+    let newDate = new Date();
+    if (date) {
+        newDate = new Date(date.getTime());
+    }
+    newDate.setDate(newDate.getDate() + days);
+    return newDate;
+};
 
-export function ResponseFailed(errorMsg: string, data: any): ResponseFailedInterface {
-    return {
-        status: false,
-        message: errorMsg,
-        data: data
-    };
-}
+var key = 'q2V7Ad2d7k6cZ3RXjLdE8IwP5ostGxaH'; // 32 bytes
+var iv = randomBytes(16);
 
-export function ResponseDuplicateException(message): HttpException {
-    throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
-}
+export const encryptData = (textToEncrypt: string): string => {
+    const cipher = createCipheriv('aes-256-ctr', key, iv);
+    const encryptedText = Buffer.concat([
+        cipher.update(textToEncrypt),
+        cipher.final(),
+    ]);
+    return encryptedText.toString('hex');
+};
+
+export const decryptData = (encryptedText: string): string => {
+    // convert encryptedText to buffer
+    const encryptedBuffer = Buffer.from(encryptedText, 'hex');
+    const decipher = createDecipheriv('aes-256-ctr', key, iv);
+    const decryptedText = Buffer.concat([
+        decipher.update(encryptedBuffer),
+        decipher.final(),
+    ]);
+    return decryptedText.toString();
+};
+
+export const randRange = (min: number, max: number) => {
+    let range = max - min;
+    let requestBytes = Math.ceil(Math.log2(range) / 8);
+    if (min > max) {
+        return min;
+    }
+    if (!requestBytes) {
+        // No randomness required
+        return min;
+    }
+    let maxNum = Math.pow(256, requestBytes);
+    let ar = new Uint8Array(requestBytes);
+    const crypto = webcrypto as unknown as Crypto;
+    while (true) {
+        crypto.getRandomValues(ar);
+        let val = 0;
+        for (let i = 0; i < requestBytes; i++) {
+            val = (val << 8) + ar[i];
+        }
+        if (val < maxNum - (maxNum % range)) {
+            return min + (val % range);
+        }
+    }
+};
+
+export const addValueToString = (str: string, values: object) => {
+    for (const key in values) {
+        str = str.replace(new RegExp(`:${key} |:${key}$`, 'g'), values[key] + ' ');
+    }
+    return str;
+};

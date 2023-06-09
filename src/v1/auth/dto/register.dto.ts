@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, Validate } from 'class-validator';
-import { ExistValidator } from '../validates/user_exist';
+import { ExistValidator } from '../validates/user-exist';
 
 export class RegisterDto {
     @ApiProperty({
