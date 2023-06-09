@@ -14,7 +14,7 @@ import { V1Module } from './v1/v1.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    V1Module,
+    V1Module
   ],
 })
 export class AppModule { }

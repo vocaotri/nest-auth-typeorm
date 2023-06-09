@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { ADMINACCESSTOKEN, USERACCESSTOKEN } from './contants/token-name';
+import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from './contants/token-name';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,12 +19,12 @@ async function bootstrap() {
       type: 'http',
       scheme: 'bearer',
       bearerFormat: 'JWT',
-    }, USERACCESSTOKEN)
+    }, USER_ACCESS_TOKEN)
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
       bearerFormat: 'JWT',
-    }, ADMINACCESSTOKEN)
+    }, ADMIN_ACCESS_TOKEN)
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

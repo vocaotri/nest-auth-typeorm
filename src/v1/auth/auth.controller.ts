@@ -1,32 +1,18 @@
 import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ADMINACCESSTOKEN, USERACCESSTOKEN } from 'src/contants/token-name';
 import { ApiBadrequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custome.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
-import { UserRolePublic } from '../user/enums/UserRole';
+import { UserRole } from '../user/enums/UserRole';
 import { User } from '../user/user.entity';
-import { Auths } from './decorator/auths.decorator';
+import { Auth } from './decorator/auths.decorator';
 import { LoginDto } from './dto/login.dto';
 
 @Controller()
-@ApiTags('auth')
+@ApiTags('Auth')
 export class AuthController {
     @Post('login')
-    @ApiOperation({ summary: 'Login (User-Admin)' })
-    // respone with pagination
-    // @ApiPaginatedResponse({
-    //     model: User,
-    //     description: 'Success. Returns users',
-    //     status: 201
-    // })
-    // respone with model
-    // @ApiModelResponse({
-    //     model: User,
-    //     description: 'Success. Returns user',
-    //     status: 201
-    // })
-    // respone custom
+    @ApiOperation({ summary: 'Login' })
     @ApiCustomResponse({
         status: HttpStatus.OK,
         description: 'Success. Returns access token',
@@ -55,7 +41,7 @@ export class AuthController {
         message: ['Phone number is already in use']
     })
     @Post('register')
-    @ApiOperation({ summary: 'Register (User)' })
+    @ApiOperation({ summary: 'Register' })
     async register() {
         return 'register';
     }
@@ -66,7 +52,7 @@ export class AuthController {
         status: HttpStatus.ACCEPTED
     })
     @Delete('logout')
-    @ApiOperation({ summary: 'Logout (User-Admin)' })
+    @ApiOperation({ summary: 'Logout' })
     @ApiNotFoundResponse({
         description: 'Not Found',
         status: HttpStatus.NOT_FOUND,
@@ -83,8 +69,21 @@ export class AuthController {
             }
         }
     })
-    @Auths([UserRolePublic.USER, UserRolePublic.ADMIN], [USERACCESSTOKEN, ADMINACCESSTOKEN])
+    @Auth(UserRole.USER)
     async logout() {
         return 'logout';
     }
+
+    // respone with pagination
+    // @ApiPaginatedResponse({
+    //     model: User,
+    //     description: 'Success. Returns users',
+    //     status: 201
+    // })
+    // respone with model
+    // @ApiModelResponse({
+    //     model: User,
+    //     description: 'Success. Returns user',
+    //     status: 201
+    // })
 }

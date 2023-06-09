@@ -1,25 +1,33 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { UserRolePublic } from 'src/v1/user/enums/UserRole';
-import { RolesGuard } from '../guard/role.guard';
+import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from 'src/contants/token-name';
+import { UserRole } from 'src/v1/user/enums/UserRole';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
+import { RolesGuard } from '../guard/role.guard';
 import { AuthRoles } from './auth.decorator';
 
-export function Auths(role?: UserRolePublic | UserRolePublic[], token_types?: string[]) {
+export function Auth(role?: UserRole | UserRole[], token_types?: string | string[]) {
     let roles = [];
     if (typeof role === 'string') roles = [role];
     else roles = role;
-    let decarators = [
+    let decorators = [
         AuthRoles(...roles),
         UseGuards(JwtAuthGuard, RolesGuard),
     ];
-    token_types.forEach(token_type => {
-        decarators.push(
-            ApiBearerAuth(token_type),
-            ApiUnauthorizedResponse({ description: 'Unauthorized' }),
-        );
-    });
+    switch (role) {
+        case UserRole.USER:
+            decorators.push(
+                ApiBearerAuth(USER_ACCESS_TOKEN),
+                ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+            );
+            break;
+        default:
+            decorators.push(
+                ApiBearerAuth(ADMIN_ACCESS_TOKEN),
+                ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+            );
+    }
     return applyDecorators(
-        ...decarators,
+        ...decorators,
     );
 }
