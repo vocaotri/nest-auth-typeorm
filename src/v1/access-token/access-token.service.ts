@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccessToken } from './access-token.entity';
-import { IsNull, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, MoreThanOrEqual, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class AccessTokenService {
@@ -34,18 +34,18 @@ export class AccessTokenService {
     }
 
     async revokeTokenByUserId(userId: number) {
-        const records = await this.accessTokenRepository.update({
+        return await this.accessTokenRepository.update({
             userId: userId,
             revokedAt: IsNull()
         }, { revokedAt: new Date() });
-        return records;
     }
 
     async findByRefreshToken(refreshTokenDecrypt: string): Promise<AccessToken> {
         return await this.accessTokenRepository.findOne({
             where: {
                 refreshToken: refreshTokenDecrypt,
-                refreshExpirationDate: MoreThanOrEqual(new Date())
+                refreshExpirationDate: MoreThanOrEqual(new Date()),
+                revokedAt: IsNull()
             },
             relations: ['user']
         });

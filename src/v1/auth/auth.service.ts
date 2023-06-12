@@ -90,6 +90,40 @@ export class AuthService {
         }
     }
 
+    async refreshToken(refreshToken: string) {
+        const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
+        const refreshTokenDecrypt = decryptData(refreshToken);
+        const userAccessToken = await this.accessTokenService.findByRefreshToken(refreshTokenDecrypt);
+        if (!userAccessToken) {
+            throw new BadRequestException('Refresh token is incorrect');
+        }
+        if (userAccessToken.user.status != UserStatus.ACTIVE) {
+            throw new ForbiddenException('User is not active');
+        }
+        const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
+        const accessToken = new AccessToken();
+        accessToken.user = userAccessToken.user;
+        accessToken.token = tokenMint;
+        accessToken.expirationDate = tokenExp;
+        accessToken.refreshToken = tokenRefreshMint;
+        accessToken.refreshExpirationDate = tokenRefreshExp;
+        await this.accessTokenService.createAccessToken(accessToken, isolateLogin);
+        await this.accessTokenService.revokeTokenById(userAccessToken.id);
+        return {
+            data: {
+                user: userAccessToken.user,
+                token: {
+                    accessToken: token,
+                    expirationDate: tokenExp,
+                    refreshToken: tokenRefreshEncrypted,
+                    refreshExpirationDate: tokenRefreshExp
+                }
+            },
+            message: 'Success. Returns user',
+        }
+        console.log(userAccessToken);
+    }
+
     async logout(user: User): Promise<Response<{ data: any }>> {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         if (!isolateLogin) {

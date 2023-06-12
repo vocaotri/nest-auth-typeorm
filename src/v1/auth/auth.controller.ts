@@ -11,6 +11,7 @@ import { Auth } from './decorator/auths.decorator';
 import { GetUser } from './decorator/get-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Controller()
 @ApiTags('Auth')
@@ -70,5 +71,29 @@ export class AuthController {
     @HttpCode(HttpStatus.ACCEPTED)
     async logout(@GetUser() user: User) {
         return this.authService.logout(user);
+    }
+
+    @Post('refresh-token')
+    @ApiOperation({ summary: 'Refresh token' })
+    @ApiCustomResponse({
+        status: HttpStatus.OK,
+        message: 'Success. Returns access token',
+        dataCustom: {
+            key: 'token',
+            value: {
+                accessToken: { type: 'string', example: "jwtToken" },
+                expirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
+                refreshToken: { type: 'string', example: "refreshToken", },
+                refreshExpirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" }
+            }
+        },
+        model: User
+    })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: ['Refresh token is incorrect']
+    })
+    async refreshToken(@Body() refreshDto: RefreshDto) {
+        return this.authService.refreshToken(refreshDto.refreshToken);
     }
 }

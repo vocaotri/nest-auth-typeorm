@@ -12,4 +12,4 @@ import { AccessToken } from './access-token.entity';
   providers: [AccessTokenService],
   exports: [AccessTokenService],
 })
-export class AccessTokenModule {}
+export class AccessTokenModule { }
