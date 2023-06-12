@@ -60,6 +60,9 @@ export class User extends AppBaseEntity {
     @OneToMany(() => AccessToken, (_) => _.user)
     accessTokens: AccessToken[];
 
+    @Exclude()
+    currentAccessTokenId?: number;
+
     // @OneToMany(() => UserVerify, (_) => _.user_verify)
     // user_verifies: UserVerify[];
 
@@ -72,7 +75,7 @@ export class User extends AppBaseEntity {
         this.notDelete = null;
         await this.save();
     }
-    
+
     @Exclude()
     private tempPassword: string;
 

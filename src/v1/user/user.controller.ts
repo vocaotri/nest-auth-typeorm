@@ -5,6 +5,7 @@ import { Auth } from '../auth/decorator/auths.decorator';
 import { UserRole } from './enums/UserRole';
 import { User } from './user.entity';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
+import { GetUser } from '../auth/decorator/get-user.decorator';
 
 @Controller()
 @ApiTags('User')
@@ -17,8 +18,8 @@ export class UserController {
     @ApiOperation({ summary: 'Get current user' })
     @Get('me')
     @Auth(UserRole.USER)
-    async me() {
-        return 'me';
+    async me(@GetUser() user: User) {
+        return user;
     }
 
     @ApiModelResponse({

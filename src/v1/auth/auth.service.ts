@@ -4,18 +4,28 @@ import { UserService } from '../user/user.service';
 import { compare } from 'bcrypt';
 import { Response } from 'src/utils/interceptors/transform.interceptor';
 import { User } from '../user/user.entity';
-import { encryptData } from 'src/utils/utils';
+import { decryptData, encryptData } from 'src/utils/utils';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
+import { AccessToken } from '../access_token/access_token.entity';
+import { AccessTokenService } from '../access_token/access_token.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userService: UserService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private accessTokenService: AccessTokenService
     ) { }
     async validateToken(hash: any) {
-        throw new Error('Method not implemented.');
+        let tokenDecrypt = decryptData(hash);
+        let userAccessToken = await this.accessTokenService.findByToken(tokenDecrypt);
+        if(userAccessToken && userAccessToken.user) {
+            const user: User = userAccessToken.user;
+            await this.accessTokenService.updateLastUsed(userAccessToken.id);
+            user.currentAccessTokenId = userAccessToken.id;
+            return userAccessToken.user;
+        }
     }
 
     generateToken() {
@@ -42,16 +52,30 @@ export class AuthService {
         }
     }
 
-    async login(loginDto: LoginDto): Promise<Response<User>> {
+    async login(loginDto: LoginDto): Promise<Response<{ user: User, token: any }>> {
         const user = await this.userService.getUser({ email: loginDto.email });
         const isMatch = await compare(loginDto.password, user.password);
         if (!isMatch) {
             throw new BadRequestException('Email or password is incorrect');
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
-        console.log(tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp);
+        const accessToken = new AccessToken();
+        accessToken.user = user;
+        accessToken.token = tokenMint;
+        accessToken.expirationDate = tokenExp;
+        accessToken.refreshToken = tokenRefreshMint;
+        accessToken.refreshExpirationDate = tokenRefreshExp;
+        await this.accessTokenService.createAccessToken(accessToken);
         return {
-            data: user,
+            data: {
+                user: user,
+                token: {
+                    accessToken: token,
+                    expirationDate: tokenExp,
+                    refreshToken: tokenRefreshEncrypted,
+                    refreshExpirationDate: tokenRefreshExp
+                }
+            },
             message: 'Success. Returns user',
         }
     }

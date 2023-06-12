@@ -46,14 +46,18 @@ export class AccessToken extends AppBaseEntity {
         example: 1,
         description: 'revokedAt',
     })
-    @Column()
+    @Column({
+        nullable: true,
+    })
     revokedAt: Date;
 
     @ApiProperty({
         example: 1,
         description: 'lastUsedAt',
     })
-    @Column()
+    @Column({
+        nullable: true,
+    })
     lastUsedAt: Date;
 
     @ApiProperty({
@@ -62,4 +66,7 @@ export class AccessToken extends AppBaseEntity {
     })
     @ManyToOne(() => User, (user) => user.accessTokens)
     user: User;
+
+    @Column()
+    userId: number;
 }

@@ -6,6 +6,10 @@ import {
     webcrypto,
 } from 'crypto';
 
+var key = process.env.ENCRYPTION_KEY || 'q2V7Ad2d7k6cZ3RXjLdE8IwP5ostGxaH'; // 32 bytes
+var ivHex = process.env.IV_KEY || '97dda8f12eb735505e3b9d76b416b2d2'; // 32 bytes => 16 ** need to randomBytes(16)
+var iv = Buffer.from(ivHex, 'hex');
+
 export const hashPassword = async (password: string): Promise<string> => {
     return await bcrypt.hash(password, 11);
 };
@@ -28,9 +32,6 @@ export const addDays = (days, date = null) => {
     return newDate;
 };
 
-var key = 'q2V7Ad2d7k6cZ3RXjLdE8IwP5ostGxaH'; // 32 bytes
-var iv = randomBytes(16);
-
 export const encryptData = (textToEncrypt: string): string => {
     const cipher = createCipheriv('aes-256-ctr', key, iv);
     const encryptedText = Buffer.concat([
@@ -50,6 +51,7 @@ export const decryptData = (encryptedText: string): string => {
     ]);
     return decryptedText.toString();
 };
+
 
 export const randRange = (min: number, max: number) => {
     let range = max - min;

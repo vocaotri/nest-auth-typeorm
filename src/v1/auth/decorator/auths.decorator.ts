@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { RolesGuard } from '../guard/role.guard';
 import { AuthRoles } from './auth.decorator';
 
-export function Auth(role?: UserRole | UserRole[], token_types?: string | string[]) {
+export function Auth(role?: UserRole | UserRole[]) {
     let roles = [];
     if (typeof role === 'string') roles = [role];
     else roles = role;

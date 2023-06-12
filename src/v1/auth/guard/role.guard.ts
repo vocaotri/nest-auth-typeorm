@@ -1,7 +1,6 @@
-import { Request } from 'express';
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from 'src/v1/user/enums/UserRole';
+import { Request } from 'express';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,9 +12,8 @@ export class RolesGuard implements CanActivate {
         }
         if (typeof roles[0] === 'object') roles = roles[0];
         const request = context.switchToHttp().getRequest<Request>();
-        const data: any = request.user;
-        const { user } = data;
-        const isAuthorized = roles.includes(user.role);
+        const userRequest: any = request.user;
+        const isAuthorized = roles.includes(userRequest.role);
         if (!isAuthorized) {
             throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
         }

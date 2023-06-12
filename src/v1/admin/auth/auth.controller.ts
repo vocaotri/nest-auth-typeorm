@@ -17,9 +17,9 @@ export class AuthController {
         status: HttpStatus.OK,
         message: 'Success. Returns access token',
         dataCustom: {
-            key: 'tokens',
+            key: 'token',
             value: {
-                access_token: { type: 'string', example: "jwt_token" },
+                accessToken: { type: 'string', example: "jwt_token" },
                 expirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
                 refreshToken: { type: 'string', example: "refreshToken", },
                 refreshExpirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" }

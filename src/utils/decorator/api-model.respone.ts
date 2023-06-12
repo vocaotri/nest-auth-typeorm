@@ -15,14 +15,9 @@ export const ApiModelResponse = (
         properties: {}
     };
     if (options.model) {
-        const modelName = options.model.name.toLowerCase();
         data = {
-            properties: {
-                [modelName]: {
-                    type: 'object',
-                    $ref: getSchemaPath(options.model)
-                },
-            }
+            type: 'object',
+            $ref: getSchemaPath(options.model)
         }
         apiExtraModels = ApiExtraModels(options.model);
     }
