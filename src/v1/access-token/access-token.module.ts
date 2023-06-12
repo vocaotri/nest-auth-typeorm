@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AccessTokenController } from './access_token.controller';
-import { AccessTokenService } from './access_token.service';
+import { AccessTokenController } from './access-token.controller';
+import { AccessTokenService } from './access-token.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccessToken } from './access_token.entity';
+import { AccessToken } from './access-token.entity';
 
 @Module({
   imports: [

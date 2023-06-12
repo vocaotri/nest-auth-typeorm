@@ -32,5 +32,6 @@ export class RegisterDto {
         example: 'usernameeee',
         description: 'username',
     })
+    @Validate(ExistValidator, ['username'])
     username: string;
 }

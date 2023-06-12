@@ -33,6 +33,7 @@ services:
         volumes:
             - ./src:/usr/src/app/src
             - ./package.json:/usr/src/app/package.json
+            - ./templates:/usr/src/app/templates
         ports:
             - '${M_PORT}:${PORT}'
 networks:

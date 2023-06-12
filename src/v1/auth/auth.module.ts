@@ -6,7 +6,7 @@ import { ExistValidator } from './validates/user-exist';
 import { NotExistValidator } from './validates/user-not-exist';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AccessTokenModule } from '../access_token/access_token.module';
+import { AccessTokenModule } from '../access-token/access-token.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({

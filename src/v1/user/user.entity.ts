@@ -1,15 +1,21 @@
 import { AfterLoad, BeforeInsert, BeforeSoftRemove, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Exclude } from 'class-transformer';
-// import { UserVerify } from './user_verify.entity';
 import { hashPassword } from 'src/utils/utils';
 // import { Pet } from './pet.entity';
 import { PolymorphicChildren } from 'typeorm-polymorphic';
 // import { Follow } from './follow.entity';
 import { AppBaseEntity } from 'src/utils/entities/base.entity';
 import { UserRole } from './enums/UserRole';
-import { AccessToken } from '../access_token/access_token.entity';
+import { AccessToken } from '../access-token/access-token.entity';
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
+import { Verify } from '../verify/verify.entity';
 
+// enum
+export enum UserStatus {
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+    BLOCKED = 'BLOCKED',
+}
 @Entity({
     name: 'users',
 })
@@ -57,14 +63,21 @@ export class User extends AppBaseEntity {
     @Column({ type: "enum", enum: UserRole, default: UserRole.USER })
     role: UserRole;
 
+    @ApiProperty({
+        example: UserStatus.ACTIVE,
+        description: 'Status of User',
+    })
+    @Column({ type: "enum", enum: UserStatus, default: UserStatus.INACTIVE })
+    status: UserStatus;
+
     @OneToMany(() => AccessToken, (_) => _.user)
     accessTokens: AccessToken[];
 
     @Exclude()
     currentAccessTokenId?: number;
 
-    // @OneToMany(() => UserVerify, (_) => _.user_verify)
-    // user_verifies: UserVerify[];
+    @OneToMany(() => Verify, (_) => _.user)
+    verifies: Verify[];
 
     @Column({ select: false, default: 1, nullable: true })
     @Exclude()

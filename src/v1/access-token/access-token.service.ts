@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AccessToken } from './access_token.entity';
+import { AccessToken } from './access-token.entity';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 
 @Injectable()
