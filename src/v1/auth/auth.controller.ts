@@ -1,15 +1,16 @@
-import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custom.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { UserRole } from '../user/enums/UserRole';
 import { User } from '../user/user.entity';
-import { Auth } from './decorator/auths.decorator';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
+import { Auth } from './decorator/auths.decorator';
+import { GetUser } from './decorator/get-user.decorator';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller()
 @ApiTags('Auth')
@@ -60,13 +61,14 @@ export class AuthController {
 
     @ApiModelResponse({
         model: null,
-        message: 'Success. Returns user',
+        message: 'Logout success',
         status: HttpStatus.ACCEPTED
     })
     @Delete('logout')
     @ApiOperation({ summary: 'Logout' })
     @Auth(UserRole.USER)
-    async logout() {
-        return 'logout';
+    @HttpCode(HttpStatus.ACCEPTED)
+    async logout(@GetUser() user: User) {
+        return this.authService.logout(user);
     }
 }

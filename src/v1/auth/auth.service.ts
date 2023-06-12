@@ -9,19 +9,24 @@ import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessToken } from '../access-token/access-token.entity';
 import { AccessTokenService } from '../access-token/access-token.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userService: UserService,
         private jwtService: JwtService,
-        private accessTokenService: AccessTokenService
+        private accessTokenService: AccessTokenService,
+        private configService: ConfigService
     ) { }
 
     async validateToken(hash: any) {
         let tokenDecrypt = decryptData(hash);
         let userAccessToken = await this.accessTokenService.findByToken(tokenDecrypt);
         if (userAccessToken && userAccessToken.user) {
+            if (userAccessToken.user.status === UserStatus.INACTIVE) {
+                throw new ForbiddenException('User is not active');
+            }
             const user: User = userAccessToken.user;
             await this.accessTokenService.updateLastUsed(userAccessToken.id);
             user.currentAccessTokenId = userAccessToken.id;
@@ -54,8 +59,9 @@ export class AuthService {
     }
 
     async login(loginDto: LoginDto): Promise<Response<{ user: User, token: any }>> {
+        const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const user = await this.userService.getUser({ email: loginDto.email });
-        if(user.status != UserStatus.ACTIVE) {
+        if (user.status != UserStatus.ACTIVE) {
             throw new ForbiddenException('User is not active');
         }
         const isMatch = await compare(loginDto.password, user.password);
@@ -69,7 +75,7 @@ export class AuthService {
         accessToken.expirationDate = tokenExp;
         accessToken.refreshToken = tokenRefreshMint;
         accessToken.refreshExpirationDate = tokenRefreshExp;
-        await this.accessTokenService.createAccessToken(accessToken);
+        await this.accessTokenService.createAccessToken(accessToken, isolateLogin);
         return {
             data: {
                 user: user,
@@ -82,5 +88,18 @@ export class AuthService {
             },
             message: 'Success. Returns user',
         }
+    }
+
+    async logout(user: User): Promise<Response<{ data: any }>> {
+        const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
+        if (!isolateLogin) {
+            await this.accessTokenService.revokeTokenById(user.currentAccessTokenId);
+        } else {
+            await this.accessTokenService.revokeTokenByUserId(user.id);
+        }
+        return {
+            data: {},
+            message: 'Logout success'
+        };
     }
 }
