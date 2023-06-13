@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custom.respone';
@@ -12,6 +12,7 @@ import { GetUser } from './decorator/get-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { VerifyDto } from './dto/verify.dto';
 
 @Controller()
 @ApiTags('Auth')
@@ -96,4 +97,20 @@ export class AuthController {
     async refreshToken(@Body() refreshDto: RefreshDto) {
         return this.authService.refreshToken(refreshDto.refreshToken);
     }
+
+    @Get('verify-token')
+    @ApiModelResponse({
+        model: null,
+        message: 'Verify success',
+        status: HttpStatus.OK
+    })
+    @ApiOperation({ summary: 'Verify token' })
+    @ApiBadRequestResponse({
+        error: 'Bad Request',
+        message: ['Verify token is incorrect']
+    })
+    async verifyToken(@Query() verifyToken: VerifyDto) {
+        return this.authService.verifyToken(verifyToken.verifyToken);
+    }
+
 }

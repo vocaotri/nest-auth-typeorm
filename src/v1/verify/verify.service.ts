@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Verify, VerifyTokenType } from './verify.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as ms from 'ms';
 import { MailService } from '../mail/mail.service';
@@ -23,7 +23,7 @@ export class VerifyService {
         const msTokenEXP = ms(this.configService.get('TOKEN_EXPIRATION_TIME'));
         const verify = new Verify();
         verify.tokenType = type;
-        verify.user = user; 
+        verify.user = user;
         verify.token = token;
         verify.expirationDate = new Date(Date.now() + msTokenEXP);
         this.mailService.sendEmailChangeEmailAddressVerifyNewEmail({
@@ -33,5 +33,21 @@ export class VerifyService {
             }
         });
         return await this.verifyRepository.save(verify);
+    }
+    // share service
+    async getVerify(tokenDecode: string): Promise<Verify> {
+        const verify = await this.verifyRepository.findOne({
+            where: {
+                token: tokenDecode,
+                usedAt: IsNull()
+            },
+            relations: ['user']
+        });
+        if (!verify) {
+            throw new BadRequestException('Verify token is incorrect');
+        }
+        verify.usedAt = new Date();
+        await this.verifyRepository.save(verify);
+        return verify;
     }
 }

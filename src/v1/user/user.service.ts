@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User, UserStatus } from './user.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { Response } from 'src/utils/interceptors/transform.interceptor';
@@ -22,10 +22,20 @@ export class UserService {
         this.verifyService.createVerify(VerifyTokenType.EMAIL, newUser);
         return {
             data: newUser,
-            message: 'Success. Returns user',
+            messages: 'Success. Returns user',
         };
     }
     // share service
+    async activeUser(id: number) {
+        const userUpdate = await this.userRepository.update({
+            id: id,
+            status: UserStatus.INACTIVE
+        }, {
+            status: UserStatus.ACTIVE
+        });
+        return userUpdate
+    }
+
     async getUser(filter: FindOptionsWhere<User> | FindOptionsWhere<User>[]): Promise<User> {
         const user = await this.userRepository.findOneOrFail({
             where: filter

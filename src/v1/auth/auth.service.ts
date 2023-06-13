@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AccessToken } from '../access-token/access-token.entity';
 import { AccessTokenService } from '../access-token/access-token.service';
 import { ConfigService } from '@nestjs/config';
+import { VerifyService } from '../verify/verify.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
         private userService: UserService,
         private jwtService: JwtService,
         private accessTokenService: AccessTokenService,
+        private verifyService: VerifyService,
         private configService: ConfigService
     ) { }
 
@@ -86,7 +88,7 @@ export class AuthService {
                     refreshExpirationDate: tokenRefreshExp
                 }
             },
-            message: 'Success. Returns user',
+            messages: 'Success. Returns user',
         }
     }
 
@@ -121,7 +123,6 @@ export class AuthService {
             },
             message: 'Success. Returns user',
         }
-        console.log(userAccessToken);
     }
 
     async logout(user: User): Promise<Response<{ data: any }>> {
@@ -133,7 +134,20 @@ export class AuthService {
         }
         return {
             data: {},
-            message: 'Logout success'
+            messages: 'Logout success'
         };
+    }
+
+    async verifyToken(verifyToken: string): Promise<Response<{ data: any }>> {
+        const verifyTokenBase64Decode = Buffer.from(verifyToken, 'base64').toString();
+        const userVerifyToken = await this.verifyService.getVerify(verifyTokenBase64Decode);
+        if (!userVerifyToken) {
+            throw new BadRequestException('Verify token is incorrect');
+        }
+        await this.userService.activeUser(userVerifyToken.user.id);
+        return {
+            data: {},
+            messages: 'Verify success'
+        }
     }
 }

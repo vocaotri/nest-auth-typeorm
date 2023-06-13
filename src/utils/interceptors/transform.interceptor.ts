@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 export interface Response<T> {
     data: T | object;
-    message: string;
+    messages?: string | string[];
     statusCode?: number;
 }
 
@@ -22,7 +22,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
             const dataEFormat = instanceToPlain(dataE)
             return {
                 data: dataEFormat.data || dataEFormat,
-                message: dataEFormat.message || this.message,
+                messages: dataEFormat.message || this.message,
                 statusCode: dataEFormat.statusCode || context.switchToHttp().getResponse<ResponseEx>().statusCode,
             };
         }));

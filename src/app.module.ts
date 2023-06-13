@@ -7,6 +7,8 @@ import { V1Module } from './v1/v1.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './utils/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
+import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
+import { DbExceptionFilter } from './utils/filters/db-exception.filter';
 
 @Module({
   imports: [
@@ -22,7 +24,11 @@ import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
   providers: [
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      useClass: AllExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DbExceptionFilter,
     },
     {
       provide: APP_INTERCEPTOR,
