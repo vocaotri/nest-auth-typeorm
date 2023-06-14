@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VerifyModule } from '../verify/verify.module';
+import { UserLoginExistValidator } from './validates/user-login-exist';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { VerifyModule } from '../verify/verify.module';
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserLoginExistValidator],
   exports: [UserService]
 })
 export class UserModule { }

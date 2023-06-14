@@ -9,6 +9,7 @@ import { UserRole } from './enums/UserRole';
 import { AccessToken } from '../access-token/access-token.entity';
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { Verify } from '../verify/verify.entity';
+import { compare } from 'bcrypt';
 
 // enum
 export enum UserStatus {
@@ -89,19 +90,10 @@ export class User extends AppBaseEntity {
         await this.save();
     }
 
-    @Exclude()
-    private tempPassword: string;
-
-    @AfterLoad()
-    loadTempPassword(): void {
-        this.tempPassword = this.password;
-    }
-
     @BeforeInsert()
     @BeforeUpdate()
     async updateHashPassword() {
-        console.log(this.password, this.tempPassword);
-        if (this.password && this.password !== this.tempPassword) {
+        if (this.password ) {
             this.password = await hashPassword(this.password);
         }
     }
