@@ -22,7 +22,6 @@ async function bootstrap() {
     .setTitle('Auth API')
     .setDescription('The nestjs auth API jwt typeorm nestjs swagger')
     .setVersion('1.0')
-    .addTag('Auth jwt typeorm swagger')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
