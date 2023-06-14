@@ -11,6 +11,7 @@ import { AccessToken } from '../access-token/access-token.entity';
 import { AccessTokenService } from '../access-token/access-token.service';
 import { ConfigService } from '@nestjs/config';
 import { VerifyService } from '../verify/verify.service';
+import { MESSAGE_TEXT } from 'src/constants/message';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +28,7 @@ export class AuthService {
         let userAccessToken = await this.accessTokenService.findByToken(tokenDecrypt);
         if (userAccessToken && userAccessToken.user) {
             if (userAccessToken.user.status === UserStatus.INACTIVE) {
-                throw new ForbiddenException('User is not active');
+                throw new ForbiddenException(MESSAGE_TEXT.USER_NOT_ACTIVE);
             }
             const user: User = userAccessToken.user;
             await this.accessTokenService.updateLastUsed(userAccessToken.id);
@@ -63,12 +64,15 @@ export class AuthService {
     async login(loginDto: LoginDto): Promise<Response<{ user: User, token: any }>> {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const user = await this.userService.getUser({ email: loginDto.email });
+        if (!user) {
+            throw new BadRequestException(MESSAGE_TEXT.LOGIN_FAIL);
+        }
         if (user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException('User is not active');
+            throw new ForbiddenException(MESSAGE_TEXT.USER_NOT_ACTIVE);
         }
         const isMatch = await compare(loginDto.password, user.password);
         if (!isMatch) {
-            throw new BadRequestException('Email or password is incorrect');
+            throw new BadRequestException(MESSAGE_TEXT.LOGIN_FAIL);
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
@@ -97,10 +101,10 @@ export class AuthService {
         const refreshTokenDecrypt = decryptData(refreshToken);
         const userAccessToken = await this.accessTokenService.findByRefreshToken(refreshTokenDecrypt);
         if (!userAccessToken) {
-            throw new BadRequestException('Refresh token is incorrect');
+            throw new BadRequestException(MESSAGE_TEXT.REFRESH_TOKEn_INCORRECT);
         }
         if (userAccessToken.user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException('User is not active');
+            throw new ForbiddenException(MESSAGE_TEXT.USER_NOT_ACTIVE);
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
@@ -142,7 +146,7 @@ export class AuthService {
         const verifyTokenBase64Decode = Buffer.from(verifyToken, 'base64').toString();
         const userVerifyToken = await this.verifyService.getVerify(verifyTokenBase64Decode);
         if (!userVerifyToken) {
-            throw new BadRequestException('Verify token is incorrect');
+            throw new BadRequestException(MESSAGE_TEXT.VERIFY_TOKEN_INCORRECT);
         }
         await this.userService.activeUser(userVerifyToken.user.id);
         return {

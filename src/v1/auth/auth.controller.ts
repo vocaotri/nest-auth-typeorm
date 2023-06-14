@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { VerifyDto } from './dto/verify.dto';
+import { MESSAGE_TEXT } from 'src/constants/message';
 
 @Controller()
 @ApiTags('Auth')
@@ -53,7 +54,7 @@ export class AuthController {
     })
     @ApiBadRequestResponse({
         error: 'Bad Request',
-        message: ['Phone number is already in use']
+        message: [MESSAGE_TEXT.PHONE_EXIST]
     })
     @Post('register')
     @ApiOperation({ summary: 'Register' })
@@ -92,7 +93,7 @@ export class AuthController {
     })
     @ApiBadRequestResponse({
         error: 'Bad Request',
-        message: ['Refresh token is incorrect']
+        message: [MESSAGE_TEXT.REFRESH_TOKEn_INCORRECT]
     })
     async refreshToken(@Body() refreshDto: RefreshDto) {
         return this.authService.refreshToken(refreshDto.refreshToken);
@@ -107,7 +108,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Verify token' })
     @ApiBadRequestResponse({
         error: 'Bad Request',
-        message: ['Verify token is incorrect']
+        message: [MESSAGE_TEXT.VERIFY_TOKEN_INCORRECT]
     })
     async verifyToken(@Query() verifyToken: VerifyDto) {
         return this.authService.verifyToken(verifyToken.verifyToken);

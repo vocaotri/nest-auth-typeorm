@@ -1,5 +1,6 @@
 import { Controller, Delete, Get, HttpStatus, Param, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { MESSAGE_TEXT } from 'src/constants/message';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { ApiPaginatedResponse } from 'src/utils/decorator/api-pagination.response';
@@ -42,7 +43,7 @@ export class UserController {
     @ApiBadRequestResponse({
         error: 'Bad Request',
         message: [
-            'User not found'
+            MESSAGE_TEXT.USER_NOT_FOUND
         ]
     })
     @Get(':id')
@@ -60,7 +61,7 @@ export class UserController {
     @ApiBadRequestResponse({
         error: 'Bad Request',
         message: [
-            'User not found'
+            MESSAGE_TEXT.USER_NOT_FOUND
         ]
     })
     @Patch(':id')
@@ -78,7 +79,7 @@ export class UserController {
     @ApiBadRequestResponse({
         error: 'Bad Request',
         message: [
-            'User not found'
+            MESSAGE_TEXT.USER_NOT_FOUND
         ]
     })
     @Delete(':id')

@@ -9,6 +9,7 @@ import { GetUser } from '../auth/decorator/get-user.decorator';
 import { UpdateDto } from './dto/update.dto';
 import { InjectUserToBody } from 'src/utils/decorator/inject-user.decorators';
 import { UserService } from './user.service';
+import { MESSAGE_TEXT } from 'src/constants/message';
 
 @Controller()
 @ApiTags('User')
@@ -37,8 +38,8 @@ export class UserController {
     @ApiBadRequestResponse({
         error: 'Bad Request',
         message: [
-            'Phone number is already in use',
-            'User not found'
+            MESSAGE_TEXT.PHONE_EXIST,
+            MESSAGE_TEXT.USER_NOT_FOUND
         ]
     })
     @ApiOperation({ summary: 'Update current user' })

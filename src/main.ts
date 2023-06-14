@@ -3,7 +3,7 @@ import { NestFactory, repl } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from './contants/token-name';
+import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from './constants/token-name';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
 
 async function bootstrap() {

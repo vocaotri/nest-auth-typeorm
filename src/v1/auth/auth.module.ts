@@ -20,6 +20,7 @@ import { VerifyModule } from '../verify/verify.module';
     inject: [ConfigService],
   }),],
   controllers: [AuthController],
-  providers: [AuthService, ExistValidator, NotExistValidator, JwtStrategy]
+  providers: [AuthService, ExistValidator, NotExistValidator, JwtStrategy],
+  exports: [AuthService]
 })
 export class AuthModule { }

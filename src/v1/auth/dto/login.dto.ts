@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, Validate } from 'class-validator';
 import { NotExistValidator } from '../validates/user-not-exist';
+import { MESSAGE_TEXT } from 'src/constants/message';
 
 export class LoginDto {
     @ApiProperty({
@@ -9,7 +10,7 @@ export class LoginDto {
     })
     @IsNotEmpty()
     @IsEmail()
-    @Validate(NotExistValidator, ['email'], { message: 'Email or password is incorrect' })
+    @Validate(NotExistValidator, ['email'], { message: MESSAGE_TEXT.LOGIN_FAIL })
     email: string;
     @ApiProperty({
         example: '123456',

@@ -1,6 +1,6 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from 'src/contants/token-name';
+import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from 'src/constants/token-name';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { RolesGuard } from '../guard/role.guard';

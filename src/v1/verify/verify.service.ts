@@ -7,6 +7,7 @@ import * as ms from 'ms';
 import { MailService } from '../mail/mail.service';
 import { User } from '../user/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { MESSAGE_TEXT } from 'src/constants/message';
 
 @Injectable()
 export class VerifyService {
@@ -45,7 +46,7 @@ export class VerifyService {
             relations: ['user']
         });
         if (!verify) {
-            throw new BadRequestException('Verify token is incorrect');
+            throw new BadRequestException(MESSAGE_TEXT.VERIFY_TOKEN_INCORRECT);
         }
         verify.usedAt = new Date();
         await this.verifyRepository.save(verify);

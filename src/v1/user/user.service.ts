@@ -56,7 +56,7 @@ export class UserService {
     }
 
     async getUser(filter: FindOptionsWhere<User> | FindOptionsWhere<User>[]): Promise<User> {
-        const user = await this.userRepository.findOneOrFail({
+        const user = await this.userRepository.findOne({
             where: filter
         });
         return user;

@@ -7,12 +7,17 @@ import { Auth } from 'src/v1/auth/decorator/auths.decorator';
 import { LoginDto } from 'src/v1/auth/dto/login.dto';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { User } from 'src/v1/user/user.entity';
+import { AuthService as AAuthService } from './auth.service';
 
 @Controller()
 @ApiTags('AAuth')
 export class AuthController {
+    constructor(
+        private readonly authService: AAuthService
+    ) { }
+
     @Post('login')
-    @ApiOperation({ summary: 'Login' })
+    @ApiOperation({ summary: 'Admin Login' })
     @ApiCustomResponse({
         status: HttpStatus.OK,
         message: 'Success. Returns access token',
@@ -32,7 +37,7 @@ export class AuthController {
         message: ['Username or password is incorrect']
     })
     async login(@Body() loginDto: LoginDto) {
-        return 'login';
+        return this.authService.login(loginDto);
     }
 
     @ApiModelResponse({
