@@ -2,7 +2,7 @@ version: "3.8"
 services:
     # Mysql
     mysqldb:
-        container_name: '${PROJECT_NAME}-mysqldb'
+        container_name: '${APP_NAME}-mysqldb'
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: '${MYSQL_PASSWORD}'
@@ -15,14 +15,14 @@ services:
         command: '--default-authentication-plugin=mysql_native_password'
     # Redis
     redis:
-        container_name: '${PROJECT_NAME}-redis'
+        container_name: '${APP_NAME}-redis'
         restart: on-failure
         image: redis:6.0.8
         ports:
             - '${REDIS_PORT}:6379'
     # Nodejs
     app:
-        container_name: "${CONTAINER_NAME}-api-service-dev"
+        container_name: "${APP_NAME}-api-service-dev"
         restart: always
         build:
             context: .

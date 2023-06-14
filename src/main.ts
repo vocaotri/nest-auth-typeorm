@@ -19,7 +19,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const config = new DocumentBuilder()
-    .setTitle('Auth API')
+    .setTitle(process.env.APP_NAME)
     .setDescription('The nestjs auth API jwt typeorm nestjs swagger')
     .setVersion('1.0')
     .addBearerAuth({
