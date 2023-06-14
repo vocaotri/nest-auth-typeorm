@@ -8,8 +8,8 @@ import { Auth } from 'src/v1/auth/decorator/auths.decorator';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { User } from 'src/v1/user/user.entity';
 
-@Controller('user')
 @ApiTags('AUser')
+@Controller()
 export class UserController {
     @ApiModelResponse({
         model: User,
