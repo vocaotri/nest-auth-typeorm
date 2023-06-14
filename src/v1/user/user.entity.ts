@@ -1,15 +1,13 @@
-import { AfterLoad, BeforeInsert, BeforeSoftRemove, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { hashPassword } from 'src/utils/utils';
+import { BeforeInsert, BeforeSoftRemove, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 // import { Pet } from './pet.entity';
-import { PolymorphicChildren } from 'typeorm-polymorphic';
 // import { Follow } from './follow.entity';
+import { ApiProperty } from '@nestjs/swagger';
 import { AppBaseEntity } from 'src/utils/entities/base.entity';
-import { UserRole } from './enums/UserRole';
 import { AccessToken } from '../access-token/access-token.entity';
-import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { Verify } from '../verify/verify.entity';
-import { compare } from 'bcrypt';
+import { UserRole } from './enums/UserRole';
 
 // enum
 export enum UserStatus {
@@ -93,7 +91,7 @@ export class User extends AppBaseEntity {
     @BeforeInsert()
     @BeforeUpdate()
     async updateHashPassword() {
-        if (this.password ) {
+        if (this.password) {
             this.password = await hashPassword(this.password);
         }
     }

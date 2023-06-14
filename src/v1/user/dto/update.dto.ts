@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsObject, IsString, Validate } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsObject, IsOptional, IsString, IsStrongPassword, Min, MinLength, NotEquals, Validate, ValidateIf } from 'class-validator';
 import { REQUEST_CONTEXT } from 'src/utils/interceptors/inject-user.interceptor';
 import { UserLoginExistValidator } from '../validates/user-login-exist';
 
@@ -26,7 +26,13 @@ export class UpdateDto {
         description: 'Password only for login normal login',
         nullable: true,
     })
+    // check Optional
     @IsString()
+    @MinLength(6)
+    @NotEquals(null)
+    // check password
+    // @IsStrongPassword()
+    @ValidateIf((object, value) => value !== undefined)
     password?: string;
 
     @IsNotEmpty()
