@@ -1,11 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
-import { HttpAdapterHost, NestFactory, repl } from '@nestjs/core';
+import { NestFactory, repl } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from './contants/token-name';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
-import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

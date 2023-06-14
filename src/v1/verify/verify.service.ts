@@ -21,6 +21,7 @@ export class VerifyService {
         const token = uuidv4();
         const tokenBase64 = Buffer.from(token).toString('base64');
         const msTokenEXP = ms(this.configService.get('TOKEN_EXPIRATION_TIME'));
+        const tokenUrl = `${this.configService.get('APP_URL')}/api/v1/auth/verify-token/?verifyToken=${tokenBase64}`;
         const verify = new Verify();
         verify.tokenType = type;
         verify.user = user;
@@ -29,7 +30,7 @@ export class VerifyService {
         this.mailService.sendEmailChangeEmailAddressVerifyNewEmail({
             toEmail: user.email,
             data: {
-                token: tokenBase64,
+                tokenUrl: tokenUrl,
             }
         });
         return await this.verifyRepository.save(verify);
