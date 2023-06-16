@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
@@ -12,14 +13,13 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
     const response = ctx.getResponse();
     const statusCode = exception.getStatus();
     const exceptionResponse = exception.getResponse() as any;
-
     const error = exceptionResponse.error;
-    let message = exceptionResponse.message;
-    if (typeof message === 'string') message = [message];
+    let errors = exceptionResponse.message;
+    if (typeof errors === 'string') errors = [errors];
     response.status(statusCode).json({
       statusCode: response.statusCode,
-      messages: message,
-      error: error,
+      messages: error,
+      errors: errors,
     });
   }
 }

@@ -1,9 +1,10 @@
-import { Controller, Delete, Get, HttpStatus, Param, Patch } from '@nestjs/common';
+import { Controller, Delete, Get, HttpStatus, Param, Patch, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MESSAGE_TEXT } from 'src/constants/message';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { ApiPaginatedResponse } from 'src/utils/decorator/api-pagination.response';
+import { LangDto } from 'src/utils/dto/lang.dto';
 import { Auth } from 'src/v1/auth/decorator/auths.decorator';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { User } from 'src/v1/user/user.entity';
@@ -19,7 +20,7 @@ export class UserController {
     @Get('me')
     @ApiOperation({ summary: 'Get current user' })
     @Auth(UserRole.ADMIN)
-    async me() {
+    async me(@Query('lang') langDto: LangDto) {
         return 'me';
     }
 
@@ -31,7 +32,7 @@ export class UserController {
     @Get()
     @ApiOperation({ summary: 'Get all users' })
     @Auth(UserRole.ADMIN)
-    async getAll() {
+    async getAll(@Query('lang') langDto: LangDto) {
         return 'getAll';
     }
 
@@ -41,15 +42,15 @@ export class UserController {
         status: HttpStatus.OK
     })
     @ApiBadRequestResponse({
-        error: 'Bad Request',
-        message: [
+        errors: [
             MESSAGE_TEXT.USER_NOT_FOUND
-        ]
+        ],
+        message: 'Bad Request'
     })
     @Get(':id')
     @ApiOperation({ summary: 'Get user by id' })
     @Auth(UserRole.ADMIN)
-    async getById(@Param('id') id: number) {
+    async getById(@Query('lang') langDto: LangDto, @Param('id') id: number) {
         return 'getById';
     }
 
@@ -59,10 +60,10 @@ export class UserController {
         status: HttpStatus.ACCEPTED
     })
     @ApiBadRequestResponse({
-        error: 'Bad Request',
-        message: [
+        errors: [
             MESSAGE_TEXT.USER_NOT_FOUND
-        ]
+        ],
+        message: 'Bad Request'
     })
     @Patch(':id')
     @ApiOperation({ summary: 'Update user by id' })
@@ -77,10 +78,10 @@ export class UserController {
         status: HttpStatus.OK
     })
     @ApiBadRequestResponse({
-        error: 'Bad Request',
-        message: [
+        errors: [
             MESSAGE_TEXT.USER_NOT_FOUND
-        ]
+        ],
+        message: 'Bad Request'
     })
     @Delete(':id')
     @ApiOperation({ summary: 'Remove user by id' })

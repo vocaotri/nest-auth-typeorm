@@ -33,8 +33,8 @@ export class AuthController {
         model: User
     })
     @ApiBadRequestResponse({
-        error: 'Bad Request',
-        message: ['Username or password is incorrect']
+        errors: ['Username or password is incorrect'],
+        message: 'Bad Request'
     })
     async login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);

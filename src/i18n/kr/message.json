@@ -1,0 +1,15 @@
+{
+  "ATTR_EXIST": "{attribute_name}존재하다",
+  "ATTR_NOT_EXIST": "{attribute_name}존재하지 않는다",
+  "ATTR_NOT_ACTIVE": "{attribute_name}활성화되지 않음",
+  "ATTR_INCORRECT": "{attribute_name}부정확하다",
+  "EMAIL_EXIST": "이메일이 존재합니다",
+  "PHONE_EXIST": "전화가 존재합니다",
+  "PHONE_NOT_EXIST": "전화번호가 존재합니다",
+  "EMAIL_NOT_EXIST": "이메일이 존재하지 않습니다",
+  "LOGIN_FAIL": "이메일 또는 비밀번호가 올바르지 않습니다",
+  "REFRESH_TOKEN_FAIL": "새로 고침 토큰이 잘못되었습니다.",
+  "VERIFY_TOKEN_FAIL": "확인 토큰이 올바르지 않음",
+  "USER_NOT_ACTIVE": "사용자가 활성 상태가 아닙니다.",
+  "FORGET_TOKEN_FAIL": "잊어버린 토큰이 올바르지 않습니다."
+}

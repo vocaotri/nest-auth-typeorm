@@ -5,10 +5,9 @@ import { ConfigService } from '@nestjs/config';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
-    constructor(private readonly configService: ConfigService) { 
+    constructor(private readonly configService: ConfigService) {
         super();
     }
-
     catch(exception: any, host: ArgumentsHost) {
         const isProduction = this.configService.get('APP_DEBUG') === 'false';
         const ctx = host.switchToHttp();
@@ -17,11 +16,11 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         console.log(exception);
 
         const body: any = {
-            messages: [
+            message: 'Internal Server Error',
+            errors: [
                 isProduction ? 'Internal Server Error' : `${exception.message}.`,
             ],
             statusCode: 500,
-            error: 'Internal Server Error',
         };
 
         response.status(500).json(body);

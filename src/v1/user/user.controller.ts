@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Patch, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiModelResponse } from 'src/utils/decorator/api-model.respone';
 import { Auth } from '../auth/decorator/auths.decorator';
@@ -10,6 +10,7 @@ import { UpdateDto } from './dto/update.dto';
 import { InjectUserToBody } from 'src/utils/decorator/inject-user.decorators';
 import { UserService } from './user.service';
 import { MESSAGE_TEXT } from 'src/constants/message';
+import { LangDto } from 'src/utils/dto/lang.dto';
 
 @Controller()
 @ApiTags('User')
@@ -26,7 +27,7 @@ export class UserController {
     @ApiOperation({ summary: 'Get current user' })
     @Get('me')
     @Auth(UserRole.USER)
-    async me(@GetUser() user: User) {
+    async me(@Query('lang') langDto: LangDto, @GetUser() user: User) {
         return user;
     }
 
@@ -36,17 +37,17 @@ export class UserController {
         status: HttpStatus.CREATED
     })
     @ApiBadRequestResponse({
-        error: 'Bad Request',
-        message: [
+        errors: [
             MESSAGE_TEXT.PHONE_EXIST,
             MESSAGE_TEXT.USER_NOT_FOUND
-        ]
+        ],
+        message: 'Bad Request'
     })
     @ApiOperation({ summary: 'Update current user' })
     @Patch()
     @Auth(UserRole.USER)
     @InjectUserToBody()
     async update(@GetUser() user: User, @Body() updateDto: UpdateDto) {
-        return this.userService.update(user, updateDto);;
+        return this.userService.updateUserInfo(user, updateDto);;
     }
 }

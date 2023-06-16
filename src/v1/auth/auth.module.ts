@@ -9,9 +9,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AccessTokenModule } from '../access-token/access-token.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { VerifyModule } from '../verify/verify.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [UserModule, AccessTokenModule, VerifyModule, JwtModule.registerAsync({
+  imports: [UserModule, AccessTokenModule, VerifyModule, MailModule, JwtModule.registerAsync({
     imports: [ConfigModule],
     useFactory: async (configService: ConfigService) => ({
       secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),

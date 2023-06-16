@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, GatewayTimeoutException, HttpException, Injectable } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UserService } from '../user/user.service';
 import { compare } from 'bcrypt';
@@ -12,6 +12,11 @@ import { AccessTokenService } from '../access-token/access-token.service';
 import { ConfigService } from '@nestjs/config';
 import { VerifyService } from '../verify/verify.service';
 import { MESSAGE_TEXT } from 'src/constants/message';
+import { I18nContext, I18nValidationException } from 'nestjs-i18n';
+import { ForgetPassDto } from './dto/forget-pass.dto';
+import { VerifyTokenType } from '../verify/verify.entity';
+import { MailService } from '../mail/mail.service';
+import e from 'express';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +25,8 @@ export class AuthService {
         private jwtService: JwtService,
         private accessTokenService: AccessTokenService,
         private verifyService: VerifyService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private mailService: MailService,
     ) { }
 
     async validateToken(hash: any) {
@@ -142,16 +148,43 @@ export class AuthService {
         };
     }
 
-    async verifyToken(verifyToken: string): Promise<Response<{ data: any }>> {
-        const verifyTokenBase64Decode = Buffer.from(verifyToken, 'base64').toString();
-        const userVerifyToken = await this.verifyService.getVerify(verifyTokenBase64Decode);
-        if (!userVerifyToken) {
-            throw new BadRequestException(MESSAGE_TEXT.VERIFY_TOKEN_INCORRECT);
+    async forgetPassword(forgetPasswordDto: ForgetPassDto, i18n: I18nContext) {
+        const user = await this.userService.getUser({ email: forgetPasswordDto.email });
+        if (user.status != UserStatus.ACTIVE) {
+            throw new BadRequestException(i18n.t('message.USER_NOT_ACTIVE'));
         }
+        const tokenBase64 = await this.verifyService.createVerify(VerifyTokenType.FORGET_PASSWORD, user);
+        const tokenUrl = `${this.configService.get('APP_URL')}/api/v1/auth/verify-forget-token/?verifyToken=${tokenBase64}`;
+        this.mailService.sendEmailChangePassword({
+            toEmail: user.email,
+            data: {
+                tokenUrl: tokenUrl,
+            }
+        });
+        return {};
+    }
+
+    async verifyToken(verifyToken: string, i18n: I18nContext): Promise<Response<{ data: any }>> {
+        const verifyTokenBase64Decode = Buffer.from(verifyToken, 'base64').toString();
+        const userVerifyToken = await this.verifyService.getVerify(verifyTokenBase64Decode, VerifyTokenType.EMAIL, i18n);
         await this.userService.activeUser(userVerifyToken.user.id);
         return {
             data: {},
             messages: 'Verify success'
+        }
+    }
+
+    async verifyForgetToken(verifyToken: string, i18n: I18nContext, newPassword: string): Promise<Response<{ data: any }>> {
+        const verifyTokenBase64Decode = Buffer.from(verifyToken, 'base64').toString();
+        const userVerifyToken = await this.verifyService.getVerify(verifyTokenBase64Decode, VerifyTokenType.FORGET_PASSWORD, i18n);
+        const user = await this.userService.getUser({ id: userVerifyToken.user.id });
+        user.password = newPassword;
+        await this.userService.update({
+            id: user.id,
+        }, user);
+        return {
+            data: {},
+            messages: 'Reset password success'
         }
     }
 }

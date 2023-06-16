@@ -6,7 +6,7 @@ import { UserService } from '../../user/user.service';
 @ValidatorConstraint({ name: "UserNotExists", async: true })
 @Injectable()
 export class NotExistValidator implements ValidatorConstraintInterface {
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService) { }
     async validate(value: any, args: ValidationArguments): Promise<boolean> {
         const filter = {};
         filter[args.property] = value;
@@ -14,6 +14,6 @@ export class NotExistValidator implements ValidatorConstraintInterface {
         return countUser > 0;
     }
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} is not exist`;
+        return `${args.property.charAt(0).toUpperCase() + args.property.slice(1)} is not exist`;
     }
 }

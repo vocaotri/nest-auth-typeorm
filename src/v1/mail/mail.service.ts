@@ -33,4 +33,22 @@ export class MailService {
             console.log(error);
         }
     }
+
+    async sendEmailChangePassword(
+        dataSend: DataSend,
+    ): Promise<void> {
+        try {
+            const { toEmail, data } = dataSend;
+            await this.mailerService.sendMail({
+                to: toEmail,
+                from: `XOOX Developer Team <${this.mailFrom}>`,
+                subject: 'Reset password',
+                text: 'Reset password',
+                template: 'forgot-password-email',
+                context: data,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }

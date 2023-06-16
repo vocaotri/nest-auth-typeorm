@@ -20,13 +20,13 @@ export class DbExceptionFilter implements ExceptionFilter {
         const status = new InternalServerErrorException().getStatus();
 
         const body: any = {
-            messages: [
+            errors: [
                 isProduction
                     ? 'DB Error'
                     : `${exception.message}. SQL: ${exception.sql}`,
             ],
             statusCode: 500,
-            error: "Database Error",
+            message: "Database Error",
         };
 
         response.status(status).json(body);

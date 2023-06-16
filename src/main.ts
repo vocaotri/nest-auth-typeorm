@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { ADMIN_ACCESS_TOKEN, USER_ACCESS_TOKEN } from './constants/token-name';
 import { HttpExceptionFilter } from './utils/filters/http-exception.filter';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,9 +15,26 @@ async function bootstrap() {
       console.error(err);
     }
   });
+  app.useGlobalPipes(
+    new I18nValidationPipe(),
+    // new ValidationPipe()
+  );
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new I18nValidationExceptionFilter({
+    detailedErrors: false,
+    // errorFormatter: (validationErrors) => {
+    //   // return array key and error message
+    //   return validationErrors.map((error) => {
+    //     return {
+    //       key: error.property,
+    //       message: error.constraints[Object.keys(error.constraints)[0]],
+    //     };
+    //   });
+    // }
+  }),
+    // new HttpExceptionFilter()
+  );
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const config = new DocumentBuilder()
     .setTitle(process.env.APP_NAME)

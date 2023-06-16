@@ -14,6 +14,6 @@ export class ExistValidator implements ValidatorConstraintInterface {
         return countUser == 0;
     }
     defaultMessage(args: ValidationArguments) {
-        return `${args.property} is exist`;
+        return `${args.property.charAt(0).toUpperCase() + args.property.slice(1)} is exist`;
     }
 }

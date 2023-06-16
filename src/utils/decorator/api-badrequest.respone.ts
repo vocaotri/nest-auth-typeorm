@@ -2,9 +2,9 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiBadRequestResponse as  ApiBadRequestRes} from '@nestjs/swagger';
 
 interface IBADREQUESTDecoratorApiResponse {
-    message: string[];
+    message: string;
     status?: number;
-    error: string;
+    errors:  string[];
 }
 
 export const ApiBadRequestResponse =(
@@ -13,7 +13,7 @@ export const ApiBadRequestResponse =(
     return applyDecorators(
         ApiBadRequestRes({
             status: options.status || 400,
-            description: options.message[0] || 'Bad Request',
+            description: options.message || 'Bad Request',
             schema: {
                 properties: {
                     status: {
@@ -26,7 +26,7 @@ export const ApiBadRequestResponse =(
                     },
                     error: {
                         type: 'string',
-                        default: options.error || 'Bad Request',
+                        default: options.errors || 'Bad Request',
                     }
                 },
             },

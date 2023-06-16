@@ -31,9 +31,9 @@ services:
             - .env
         # mount only src folder
         volumes:
-            - ./src:/usr/src/app/src
-            - ./package.json:/usr/src/app/package.json
-            - ./templates:/usr/src/app/templates
+            - ./src:/usr/app/src
+            - ./package.json:/usr/app/package.json
+            - ./templates:/usr/app/templates
         ports:
             - '${M_PORT}:${PORT}'
 networks:

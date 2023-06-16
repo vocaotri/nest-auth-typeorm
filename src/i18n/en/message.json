@@ -1,0 +1,15 @@
+{
+  "ATTR_EXIST": "{attribute_name} is exist",
+  "ATTR_NOT_EXIST": "{attribute_name} is not exist",
+  "ATTR_NOT_ACTIVE": "{attribute_name} is not active",
+  "ATTR_INCORRECT": "{attribute_name} is incorrect",
+  "EMAIL_EXIST": "Email is exist",
+  "PHONE_EXIST": "Phone number is exist",
+  "PHONE_NOT_EXIST": "Phone is not exist",
+  "EMAIL_NOT_EXIST": "Email is not exist",
+  "LOGIN_FAIL": "Email or password is incorrect",
+  "REFRESH_TOKEN_FAIL": "Refresh token is incorrect",
+  "VERIFY_TOKEN_FAIL": "Verify token is incorrect",
+  "USER_NOT_ACTIVE": "User is not active",
+  "FORGET_TOKEN_FAIL": "Forget token is incorrect"
+}
