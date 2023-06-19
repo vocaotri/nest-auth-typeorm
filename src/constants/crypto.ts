@@ -1,3 +1,0 @@
-const SALTORROUNDS = 10;
-const ENCRYPTION_KEY = '0TnelwhpweXUWIjvZS';
-export { SALTORROUNDS , ENCRYPTION_KEY };

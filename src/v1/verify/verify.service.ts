@@ -7,6 +7,7 @@ import { IsNull, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../user/user.entity';
 import { Verify, VerifyTokenType } from './verify.entity';
+import { I18nPath } from 'src/generated/i18n.generated';
 
 @Injectable()
 export class VerifyService {
@@ -40,9 +41,9 @@ export class VerifyService {
         if (!verify) {
             switch (verifyTokenType) {
                 case VerifyTokenType.FORGET_PASSWORD:
-                    throw new BadRequestException(i18n.t('message.FORGET_TOKEN_FAIL'));
+                    throw new BadRequestException(i18n.t<I18nPath>('message.FORGET_TOKEN_FAIL'));
                 default:
-                    throw new BadRequestException(i18n.t('message.VERIFY_TOKEN_FAIL'));
+                    throw new BadRequestException(i18n.t<I18nPath>('message.VERIFY_TOKEN_FAIL'));
             }
         }
         verify.usedAt = new Date();
