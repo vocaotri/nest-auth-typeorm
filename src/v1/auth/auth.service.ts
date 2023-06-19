@@ -16,6 +16,7 @@ import { VerifyTokenType } from '../verify/verify.entity';
 import { VerifyService } from '../verify/verify.service';
 import { ForgetPassDto } from './dto/forget-pass.dto';
 import { LoginDto } from './dto/login.dto';
+import { I18nPath } from 'src/generated/i18n.generated';
 
 @Injectable()
 export class AuthService {
@@ -70,14 +71,14 @@ export class AuthService {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const user = await this.userService.getUser({ email: loginDto.email });
         if (!user) {
-            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.LOGIN_FAIL'));
         }
         if (user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException(i18n.t('message.USER_NOT_ACTIVE'));
+            throw new ForbiddenException(i18n.t<I18nPath>('message.USER_NOT_ACTIVE'));
         }
         const isMatch = await compare(loginDto.password, user.password);
         if (!isMatch) {
-            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.LOGIN_FAIL'));
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
@@ -106,10 +107,10 @@ export class AuthService {
         const refreshTokenDecrypt = decryptData(refreshToken);
         const userAccessToken = await this.accessTokenService.findByRefreshToken(refreshTokenDecrypt);
         if (!userAccessToken) {
-            throw new BadRequestException(i18n.t('message.REFRESH_TOKEN_FAIL'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.REFRESH_TOKEN_FAIL'));
         }
         if (userAccessToken.user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException(i18n.t('message.USER_NOT_ACTIVE'));
+            throw new ForbiddenException(i18n.t<I18nPath>('message.USER_NOT_ACTIVE'));
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
@@ -150,7 +151,7 @@ export class AuthService {
     async forgetPassword(forgetPasswordDto: ForgetPassDto, i18n: I18nContext) {
         const user = await this.userService.getUser({ email: forgetPasswordDto.email });
         if (user.status != UserStatus.ACTIVE) {
-            throw new BadRequestException(i18n.t('message.USER_NOT_ACTIVE'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.USER_NOT_ACTIVE'));
         }
         const tokenBase64 = await this.verifyService.createVerify(VerifyTokenType.FORGET_PASSWORD, user);
         const tokenUrl = `${this.configService.get('APP_URL')}/api/v1/auth/verify-forget-token/?verifyToken=${tokenBase64}`;

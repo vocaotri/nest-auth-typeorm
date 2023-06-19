@@ -10,6 +10,7 @@ import { AccessToken } from 'src/v1/access-token/access-token.entity';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { MESSAGE_TEXT } from 'src/constants/message';
 import { I18nContext } from 'nestjs-i18n';
+import { I18nPath, I18nTranslations } from 'src/generated/i18n.generated';
 
 @Injectable()
 export class AuthService {
@@ -24,14 +25,14 @@ export class AuthService {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const user = await this.userService.getUser({ email: loginDto.email, role: UserRole.ADMIN });
         if (!user) {
-            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.LOGIN_FAIL'));
         }
         if (user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException(i18n.t('message.USER_NOT_ACTIVE'));
+            throw new ForbiddenException(i18n.t<I18nPath>('message.USER_NOT_ACTIVE'));
         }
         const isMatch = await compare(loginDto.password, user.password);
         if (!isMatch) {
-            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
+            throw new BadRequestException(i18n.t<I18nPath>('message.LOGIN_FAIL'));
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.authService.generateToken();
         const accessToken = new AccessToken();
