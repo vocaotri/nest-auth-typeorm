@@ -11,6 +11,6 @@ export class ForgetPassDto {
     })
     @IsNotEmpty()
     @IsEmail()
-    @Validate(NotExistValidator, ['email'], { message: i18nValidationMessage<I18nTranslations>('message.EMAIL_NOT_EXIST') })
+    @Validate(NotExistValidator, ['email'], { message: i18nValidationMessage<I18nTranslations>('message.ATTR_NOT_EXIST', { attribute_name: "email" }) })
     email: string;
 }

@@ -10,12 +10,28 @@ export type I18nTranslations = {
         "EMAIL_EXIST": string;
         "PHONE_EXIST": string;
         "PHONE_NOT_EXIST": string;
+        "USERNAME_EXIST": string;
         "EMAIL_NOT_EXIST": string;
         "LOGIN_FAIL": string;
         "REFRESH_TOKEN_FAIL": string;
         "VERIFY_TOKEN_FAIL": string;
         "USER_NOT_ACTIVE": string;
         "FORGET_TOKEN_FAIL": string;
+        "ATTR_NOT_EMPTY": string;
+        "ATTR_MIN_LENGTH": string;
+        "ATTR_IS_EMAIL": string;
+        "ATTR_IS_STRING": string;
+    };
+    "objects": {
+        "EMAIL": string;
+        "Email": string;
+        "email": string;
+        "PHONE": string;
+        "Phone": string;
+        "phone": string;
+        "USERNAME": string;
+        "Username": string;
+        "username": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;

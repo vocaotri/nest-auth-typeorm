@@ -14,19 +14,18 @@ import { Auth } from './decorator/auths.decorator';
 import { GetUser } from './decorator/get-user.decorator';
 import { ForgetPassDto } from './dto/forget-pass.dto';
 import { LoginDto } from './dto/login.dto';
+import { NewPassDto } from './dto/new-pass.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
-import { VerifyDto } from './dto/verify.dto';
 import { ResetPassDto } from './dto/reset-pass.dto';
-import { NewPassDto } from './dto/new-pass.dto';
-
+import { VerifyDto } from './dto/verify.dto';
 
 @Controller()
 @ApiTags('Auth')
 export class AuthController {
     constructor(
         private readonly userService: UserService,
-        private readonly authService: AuthService
+        private readonly authService: AuthService,
     ) { }
 
     @Post('login')
@@ -35,7 +34,7 @@ export class AuthController {
         status: HttpStatus.OK,
         message: 'Success. Returns access token',
         dataCustom: {
-            key: 'token',
+            key: 'tokens',
             value: {
                 accessToken: { type: 'string', example: "jwtToken" },
                 expirationDate: { type: 'string', example: "2021-08-01T08:00:00.000Z" },
@@ -46,11 +45,13 @@ export class AuthController {
         model: User
     })
     @ApiBadRequestResponse({
-        errors: ['Username or password is incorrect'],
+        errors: [
+            MESSAGE_TEXT.LOGIN_FAIL,
+        ],
         message: 'Bad Request'
     })
-    async login(@Body() loginDto: LoginDto, @I18n() i18n: I18nContext) {
-        return this.authService.login(loginDto);
+    async login(@Query('lang') langDto: LangDto, @Body() loginDto: LoginDto, @I18n() i18n: I18nContext) {
+        return this.authService.login(loginDto, i18n);
     }
 
     @ApiModelResponse({
@@ -64,7 +65,7 @@ export class AuthController {
     })
     @Post('register')
     @ApiOperation({ summary: 'Register' })
-    async register(@Body() registerDto: RegisterDto, @I18n() i18n: I18nContext) {
+    async register(@Query('lang') langDto: LangDto, @Body() registerDto: RegisterDto) {
         return this.userService.createUser(registerDto);
     }
 
@@ -92,7 +93,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Logout' })
     @Auth(UserRole.USER)
     @HttpCode(HttpStatus.ACCEPTED)
-    async logout(@Query('lang') langDto: LangDto, @GetUser() user: User, @I18n() i18n: I18nContext) {
+    async logout(@Query('lang') langDto: LangDto, @GetUser() user: User) {
         return this.authService.logout(user);
     }
 
@@ -113,11 +114,11 @@ export class AuthController {
         model: User
     })
     @ApiBadRequestResponse({
-        errors: [MESSAGE_TEXT.REFRESH_TOKEn_INCORRECT],
+        errors: [MESSAGE_TEXT.REFRESH_TOKEN_INCORRECT],
         message: 'Bad Request'
     })
-    async refreshToken(@Body() refreshDto: RefreshDto, @I18n() i18n: I18nContext) {
-        return this.authService.refreshToken(refreshDto.refreshToken);
+    async refreshToken(@Query('lang') langDto: LangDto, @Body() refreshDto: RefreshDto, @I18n() i18n: I18nContext) {
+        return this.authService.refreshToken(refreshDto.refreshToken, i18n);
     }
 
     @Get('verify-token')

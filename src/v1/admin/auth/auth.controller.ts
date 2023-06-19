@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiBadRequestResponse } from 'src/utils/decorator/api-badrequest.respone';
 import { ApiCustomResponse } from 'src/utils/decorator/api-custom.respone';
@@ -8,6 +8,8 @@ import { LoginDto } from 'src/v1/auth/dto/login.dto';
 import { UserRole } from 'src/v1/user/enums/UserRole';
 import { User } from 'src/v1/user/user.entity';
 import { AuthService as AAuthService } from './auth.service';
+import { LangDto } from 'src/utils/dto/lang.dto';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller()
 @ApiTags('AAuth')
@@ -36,8 +38,8 @@ export class AuthController {
         errors: ['Username or password is incorrect'],
         message: 'Bad Request'
     })
-    async login(@Body() loginDto: LoginDto) {
-        return this.authService.login(loginDto);
+    async login(@Query('lang') langDto: LangDto, @Body() loginDto: LoginDto, @I18n() i18n: I18nContext) {
+        return this.authService.login(loginDto, i18n);
     }
 
     @ApiModelResponse({

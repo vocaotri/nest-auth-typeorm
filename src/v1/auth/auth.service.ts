@@ -1,22 +1,21 @@
-import { BadRequestException, ForbiddenException, GatewayTimeoutException, HttpException, Injectable } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import { UserService } from '../user/user.service';
-import { compare } from 'bcrypt';
-import { Response } from 'src/utils/interceptors/transform.interceptor';
-import { User, UserStatus } from '../user/user.entity';
-import { decryptData, encryptData } from 'src/utils/utils';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcrypt';
+import { I18nContext } from 'nestjs-i18n';
+import { MESSAGE_TEXT } from 'src/constants/message';
+import { Response } from 'src/utils/interceptors/transform.interceptor';
+import { decryptData, encryptData } from 'src/utils/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessToken } from '../access-token/access-token.entity';
 import { AccessTokenService } from '../access-token/access-token.service';
-import { ConfigService } from '@nestjs/config';
-import { VerifyService } from '../verify/verify.service';
-import { MESSAGE_TEXT } from 'src/constants/message';
-import { I18nContext, I18nValidationException } from 'nestjs-i18n';
-import { ForgetPassDto } from './dto/forget-pass.dto';
-import { VerifyTokenType } from '../verify/verify.entity';
 import { MailService } from '../mail/mail.service';
-import e from 'express';
+import { User, UserStatus } from '../user/user.entity';
+import { UserService } from '../user/user.service';
+import { VerifyTokenType } from '../verify/verify.entity';
+import { VerifyService } from '../verify/verify.service';
+import { ForgetPassDto } from './dto/forget-pass.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,18 +66,18 @@ export class AuthService {
         }
     }
 
-    async login(loginDto: LoginDto): Promise<Response<{ user: User, token: any }>> {
+    async login(loginDto: LoginDto, i18n: I18nContext): Promise<Response<{ user: User, token: any }>> {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const user = await this.userService.getUser({ email: loginDto.email });
         if (!user) {
-            throw new BadRequestException(MESSAGE_TEXT.LOGIN_FAIL);
+            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
         }
         if (user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException(MESSAGE_TEXT.USER_NOT_ACTIVE);
+            throw new ForbiddenException(i18n.t('message.USER_NOT_ACTIVE'));
         }
         const isMatch = await compare(loginDto.password, user.password);
         if (!isMatch) {
-            throw new BadRequestException(MESSAGE_TEXT.LOGIN_FAIL);
+            throw new BadRequestException(i18n.t('message.LOGIN_FAIL'));
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
@@ -102,15 +101,15 @@ export class AuthService {
         }
     }
 
-    async refreshToken(refreshToken: string) {
+    async refreshToken(refreshToken: string, i18n: I18nContext) {
         const isolateLogin = this.configService.get('ISOLATE_LOGIN') === 'true';
         const refreshTokenDecrypt = decryptData(refreshToken);
         const userAccessToken = await this.accessTokenService.findByRefreshToken(refreshTokenDecrypt);
         if (!userAccessToken) {
-            throw new BadRequestException(MESSAGE_TEXT.REFRESH_TOKEn_INCORRECT);
+            throw new BadRequestException(i18n.t('message.REFRESH_TOKEN_FAIL'));
         }
         if (userAccessToken.user.status != UserStatus.ACTIVE) {
-            throw new ForbiddenException(MESSAGE_TEXT.USER_NOT_ACTIVE);
+            throw new ForbiddenException(i18n.t('message.USER_NOT_ACTIVE'));
         }
         const { tokenMint, tokenRefreshMint, tokenRefreshEncrypted, token, tokenExp, tokenRefreshExp } = this.generateToken();
         const accessToken = new AccessToken();
